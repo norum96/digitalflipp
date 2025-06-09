@@ -1,0 +1,208 @@
+/* Rutenett for tjenester */
+
+table {
+  border-collapse: collapse;
+  margin-top: 20px;
+
+
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 4px 2px;
+  text-align: center;
+
+}
+
+/* Utseende på celler */
+
+.rute {
+  cursor: pointer;
+
+  /*animasjon ved edring av celle */
+  transition: background-color 2s ease;
+  /* standardbredde */
+  width: 60px;
+  /* ikke mindre */
+  min-width: 120px;
+  /* tillatt utvidelse */
+  max-width: 500px
+    /*brekk tekst ved behov */
+
+}
+
+
+/* Modal (pop-up vindu) for å legge til tjeneste */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 300px;
+}
+
+.modal-content label {
+  display: block;
+  margin-top: 10px;
+}
+
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 6px;
+  margin-top: 5px;
+}
+
+.modal-knapper {
+  margin-top: 15px;
+  text-align: right;
+}
+
+.modal-knapper button {
+  margin-left: 10px;
+}
+
+/* Marker valgt celle */
+.rute.aktiv {
+  background-color: lightgoldenrodyellow;
+  animation: blink 1s infinite ease-in-out;
+  border: 2px solid orange;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.75;
+  }
+
+  100% {
+    opacity: 0.5;
+  }
+}
+
+/* Farger for vaktkoder */
+.rute.D1 {
+  background-color: lightgreen;
+}
+
+.rute.D2 {
+  background-color: lightblue;
+}
+
+.rute.D3 {
+  background-color: lightcoral;
+}
+
+.rute.D4 {
+  background-color: lightyellow;
+}
+
+.rute.Deleger {
+  background-color: lightgray;
+}
+
+/* Instillinger for print */
+
+@media print {
+  body {
+    /* Fjern marginer og fyll ut hele siden */
+    margin: 0;
+    padding: 0;
+  }
+
+  table {
+    /* Sørg for at hele tabellen skaleres til å passe på én side */
+    width: 100%;
+    page-break-inside: avoid;
+  }
+
+  html,
+  body {
+    /* Skaleringstips: prøv også med font-size hvis nødvendig */
+    zoom: 90%;
+    /* Juster denne hvis du fortsatt får sideskift */
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 1cm;
+  }
+}
+
+/*skjul elementer som ikke skal printes */
+
+@media print {
+  .no-print {
+    display: none;
+  }
+}
+
+@media print {
+  #vaktkode-oversikt {
+    page-break-before: always;
+  }
+}
+
+/*test for å legge til andre tjenster */
+
+#ekstra-oppgaver {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 2px dashed #aaa;
+}
+
+#ekstra-oppgaver p {
+  margin: 4px 0;
+  font-style: italic;
+}
+
+/* Utseende på vaktkode-oversikt */
+
+#vaktkode-oversikt h3 {
+  padding: 0.4em;
+  border-radius: 6px;
+  margin-top: 1.2em;
+}
+
+#vaktkode-oversikt h3.D1 {
+  background-color: lightgreen;
+}
+
+#vaktkode-oversikt h3.D2 {
+  background-color: lightblue;
+}
+
+#vaktkode-oversikt h3.D3 {
+  background-color: lightcoral;
+}
+
+#vaktkode-oversikt h3.D4 {
+  background-color: lightyellow;
+}
+
+#vaktkode-oversikt h3.Deleger {
+  background-color: lightgray;
+}
+
+/* Valgfritt: kontrastfarge på overskriftstekst */
+#vaktkode-oversikt h3 {
+  color: black;
+  font-weight: bold;
+}

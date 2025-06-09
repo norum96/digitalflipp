@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="no">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Digital Flipp</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <h1>Digital flipp</h1>
+  <h2>Rutenett for tjenester</h2>
+
+  <!-- Tjeneste-rutenett -->
+  <table id="rutenett"></table>
+
+  <!-- Modal: Endre tjeneste i rutenett -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h3>Legg til eller endre tjeneste</h3>
+      <div id="modal-info" style="margin-bottom: 0.5rem; font-weight: bold;"></div>
+
+      <label for="modal-bistand">Bistand:</label>
+      <input type="text" id="modal-bistand" placeholder="F.eks: morgenstell">
+
+      <label for="modal-vaktkode">Vaktkode:</label>
+      <select id="modal-vaktkode">
+        <option value="D1">D1</option>
+        <option value="D2">D2</option>
+        <option value="D3">D3</option>
+        <option value="D4">D4</option>
+        <option value="Deleger">Deleger</option>
+      </select>
+
+      <div class="modal-buttons">
+        <button id="modal-save">Lagre</button>
+        <button id="modal-cancel">Avbryt</button>
+        <button id="modal-delete">Slett tjeneste</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vaktkode-oversikt -->
+  <div id="vaktkode-oversikt"></div>
+
+  <!-- Knapp: Skriv ut -->
+  <button class="no-print" onclick="window.print()">🖨️ Skriv ut</button>
+
+  <!-- Knapp: Legg til annen bistand -->
+  <button class="no-print" onclick="visEkstraModal()">➕ Legg til annet</button>
+
+  <!-- Modal: Oppfølging eller påminnelse -->
+  <div id="ekstra-modal" class="modal">
+    <div class="modal-content">
+      <h3>Legg til oppfølging eller påminnelse</h3>
+
+      <label for="ekstra-id">Bruker-ID:</label>
+      <input type="text" id="ekstra-id" placeholder="F.eks: 1130" />
+
+      <label for="ekstra-bistand">Bistand:</label>
+      <input type="text" id="ekstra-bistand" placeholder="F.eks: Påminnelse om dusj" />
+
+      <label for="ekstra-type">Type:</label>
+      <select id="ekstra-type" onchange="oppdaterFelter()">
+        <option value="Påminnelse">Påminnelse</option>
+        <option value="Oppfølging">Oppfølging</option>
+      </select>
+
+      <label for="ekstra-klokkeslett" id="ekstra-klokkeslett-label">Klokkeslett:</label>
+      <input type="time" id="ekstra-klokkeslett" />
+
+      <label for="ekstra-vaktkode">Vaktkode:</label>
+      <select id="ekstra-vaktkode">
+        <option value="D1">D1</option>
+        <option value="D2">D2</option>
+        <option value="D3">D3</option>
+        <option value="D4">D4</option>
+        <option value="Deleger">Deleger</option>
+      </select>
+
+      <div class="modal-knapper">
+        <button onclick="lagreEkstra()">Lagre</button>
+        <button onclick="lukkEkstraModal()">Avbryt</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Eventuelle ekstra oppgaver kan listes her (ikke i bruk aktivt nå) -->
+  <div id="ekstra-oppgaver" style="display: none;"></div>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+
+</html>

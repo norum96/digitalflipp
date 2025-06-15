@@ -1,96 +1,169 @@
 <!DOCTYPE html>
 <html lang="no">
-
 <head>
   <meta charset="UTF-8" />
   <title>Digital Flipp</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f7fb; margin: 0; padding: 0 0.5em; }
+    h1, h2 { margin-top: 1.5em; }
+    #kontroller { margin: 1em 0 2em 0; }
+    button { margin: 0.1em 0.2em; padding: 0.4em 0.8em; font-size: 1em; border-radius: 8px; border: 1px solid #bbb; background: #fff; cursor: pointer; }
+    button:hover { background: #e6e6ee; }
+    #rutenett-container { width: 100%; margin: 0; padding: 0; }
+    #rutenett-container table { width: 100%; background: #fff; box-shadow: 0 1px 8px #0001; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 0.4em 0.7em; min-width: 70px; text-align: center; }
+    .rute { cursor: pointer; transition: background-color 0.3s; }
+    .rute.aktiv { outline: 2px solid orange; }
+    .rute.låst { background: #e3e3e3 !important; color: #999 !important; cursor: not-allowed; position: relative; }
+    .rute.låst:after { content: "↥"; position: absolute; right: 2px; bottom: 2px; font-size: 0.8em; color: #bbb; }
+    .modal { display: none; position: fixed; z-index: 999; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.25); justify-content: center; align-items: center; }
+    .modal-content { background: #fff; padding: 2em 1.4em; border-radius: 14px; box-shadow: 0 8px 32px #0002; min-width: 290px; }
+    .modal-content label { display: block; margin: 1em 0 0.3em 0; }
+    .modal-content input, .modal-content select { width: 100%; padding: 0.35em; margin-bottom: 0.5em; font-size: 1em; }
+    .modal-buttons { margin-top: 1.2em; text-align: right; }
+    .modal-buttons button { margin-left: 0.4em; }
+    .vaktkode-h3 { display: inline-block; padding: 0.4em 1.4em 0.4em 0.7em; margin: 1.2em 0 0.3em 0; border-radius: 0.7em; font-size: 1.08em; font-weight: bold; }
+    .gjenta-dager { margin: 0.2em 0 1em 0; }
+    .gjenta-dager label { margin-right: 0.9em; }
+    @media print {
+      body { margin: 0; padding: 0; }
+      #rutenett-container { page-break-after: always; page-break-inside: avoid; }
+      #vaktkode-oversikt { page-break-before: always; }
+      table { width: 100% !important; page-break-inside: avoid !important; }
+      button, #kontroller, .modal { display: none !important; }
+      html, body { zoom: 90%; }
+    }
+  </style>
 </head>
-
 <body>
-
-  <h1>Digital flipp</h1>
+  <h1>Digital Flipp</h1>
+  <div id="kontroller">
+    <button id="velg-plan-btn">⚙️ Velg plan</button>
+    <button id="legg-til-bruker">➕ Legg til eller endre brukere</button>
+    <button id="legg-til-vaktkode">➕ Legg til eller endre vaktkoder</button>
+    <button id="legg-til-tjeneste">➕ Legg til ekstra bistand</button>
+    <button onclick="window.print()">🖨️ Skriv ut</button>
+  </div>
   <h2>Rutenett for tjenester</h2>
+  <div id="rutenett-container"></div>
 
-  <!-- Tjeneste-rutenett -->
-  <table id="rutenett"></table>
-
-  <!-- Modal: Endre tjeneste i rutenett -->
-  <div id="modal" class="modal">
+  <!-- Modal for planvalg -->
+  <div id="plan-modal" class="modal">
     <div class="modal-content">
-      <h3>Legg til eller endre tjeneste</h3>
-      <div id="modal-info" style="margin-bottom: 0.5rem; font-weight: bold;"></div>
-
-      <label for="modal-bistand">Bistand:</label>
-      <input type="text" id="modal-bistand" placeholder="F.eks: morgenstell">
-
-      <label for="modal-vaktkode">Vaktkode:</label>
-      <select id="modal-vaktkode">
-        <option value="D1">D1</option>
-        <option value="D2">D2</option>
-        <option value="D3">D3</option>
-        <option value="D4">D4</option>
-        <option value="Deleger">Deleger</option>
+      <h3>Velg plan</h3>
+      <label for="plan-avdeling">Avdeling:</label>
+      <select id="plan-avdeling"></select>
+      <button id="ny-avdeling-btn" type="button" style="margin-bottom:0.5em;">➕ Ny avdeling</button>
+      <button id="slett-avdeling-btn" type="button" style="float:right;color:red;margin-bottom:0.5em;">Slett avdeling</button>
+      <div id="ny-avdeling-div" style="display:none;">
+        <input type="text" id="ny-avdeling-input" placeholder="Avdelingsnavn" />
+        <button id="legg-til-avdeling-btn" type="button">Legg til</button>
+      </div>
+      <label for="plan-ukedag">Ukedag:</label>
+      <select id="plan-ukedag">
+        <option>mandag</option><option>tirsdag</option><option>onsdag</option>
+        <option>torsdag</option><option>fredag</option><option>lørdag</option><option>søndag</option>
       </select>
-
+      <label for="plan-periode">Periode:</label>
+      <select id="plan-periode"><option value="dag">Dag</option><option value="kveld">Kveld</option></select>
+      <label for="plan-starttid">Starttid:</label>
+      <input type="time" id="plan-starttid" value="08:00" />
+      <label for="plan-slutttid">Sluttid:</label>
+      <input type="time" id="plan-slutttid" value="15:00" />
+      <label for="plan-intervall">Intervall (minutter):</label>
+      <select id="plan-intervall"><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="30">30</option><option value="60">60</option></select>
       <div class="modal-buttons">
-        <button id="modal-save">Lagre</button>
-        <button id="modal-cancel">Avbryt</button>
-        <button id="modal-delete">Slett tjeneste</button>
+        <button id="plan-velg-btn">OK</button>
+        <button id="plan-cancel-btn">Avbryt</button>
       </div>
     </div>
   </div>
 
-  <!-- Vaktkode-oversikt -->
-  <div id="vaktkode-oversikt"></div>
+  <!-- Modal for tjeneste -->
+  <div id="tjeneste-modal" class="modal">
+    <div class="modal-content">
+      <h3>Legg til/endre tjeneste</h3>
+      <div id="tjeneste-modal-info"></div>
+      <label>Bistand:</label>
+      <input type="text" id="tjeneste-bistand" />
+      <label>Vaktkode:</label>
+      <select id="tjeneste-vaktkode"></select>
+      <label>Sluttid:</label>
+      <select id="tjeneste-sluttid"></select>
+      <div class="gjenta-dager">
+        <b>Gjenta:</b>
+        <label><input type="checkbox" class="gjenta-dag" value="mandag">Man</label>
+        <label><input type="checkbox" class="gjenta-dag" value="tirsdag">Tir</label>
+        <label><input type="checkbox" class="gjenta-dag" value="onsdag">Ons</label>
+        <label><input type="checkbox" class="gjenta-dag" value="torsdag">Tor</label>
+        <label><input type="checkbox" class="gjenta-dag" value="fredag">Fre</label>
+        <label><input type="checkbox" class="gjenta-dag" value="lørdag">Lør</label>
+        <label><input type="checkbox" class="gjenta-dag" value="søndag">Søn</label>
+      </div>
+      <div class="modal-buttons">
+        <button id="tjeneste-save">Lagre</button>
+        <button id="tjeneste-cancel">Avbryt</button>
+        <button id="tjeneste-delete">Slett</button>
+      </div>
+    </div>
+  </div>
 
-  <!-- Knapp: Skriv ut -->
-  <button class="no-print" onclick="window.print()">🖨️ Skriv ut</button>
-
-  <!-- Knapp: Legg til annen bistand -->
-  <button class="no-print" onclick="visEkstraModal()">➕ Legg til annet</button>
-
-  <!-- Modal: Oppfølging eller påminnelse -->
+  <!-- Modal for ekstra bistand -->
   <div id="ekstra-modal" class="modal">
     <div class="modal-content">
-      <h3>Legg til oppfølging eller påminnelse</h3>
-
-      <label for="ekstra-id">Bruker-ID:</label>
-      <input type="text" id="ekstra-id" placeholder="F.eks: 1130" />
-
-      <label for="ekstra-bistand">Bistand:</label>
-      <input type="text" id="ekstra-bistand" placeholder="F.eks: Påminnelse om dusj" />
-
-      <label for="ekstra-type">Type:</label>
-      <select id="ekstra-type" onchange="oppdaterFelter()">
+      <h3>Legg til ekstra bistand</h3>
+      <label>Bruker:</label>
+      <select id="ekstra-bruker"></select>
+      <label>Bistand:</label>
+      <input type="text" id="ekstra-bistand" />
+      <label>Type:</label>
+      <select id="ekstra-type">
         <option value="Påminnelse">Påminnelse</option>
         <option value="Oppfølging">Oppfølging</option>
       </select>
-
-      <label for="ekstra-klokkeslett" id="ekstra-klokkeslett-label">Klokkeslett:</label>
-      <input type="time" id="ekstra-klokkeslett" />
-
-      <label for="ekstra-vaktkode">Vaktkode:</label>
-      <select id="ekstra-vaktkode">
-        <option value="D1">D1</option>
-        <option value="D2">D2</option>
-        <option value="D3">D3</option>
-        <option value="D4">D4</option>
-        <option value="Deleger">Deleger</option>
-      </select>
-
-      <div class="modal-knapper">
-        <button onclick="lagreEkstra()">Lagre</button>
-        <button onclick="lukkEkstraModal()">Avbryt</button>
+      <div id="ekstra-tid-container">
+        <label>Tid:</label>
+        <input type="time" id="ekstra-tid" />
+      </div>
+      <label>Vaktkode:</label>
+      <select id="ekstra-vaktkode"></select>
+      <div class="modal-buttons">
+        <button id="ekstra-save">Lagre</button>
+        <button id="ekstra-cancel">Avbryt</button>
       </div>
     </div>
   </div>
 
-  <!-- Eventuelle ekstra oppgaver kan listes her (ikke i bruk aktivt nå) -->
-  <div id="ekstra-oppgaver" style="display: none;"></div>
+  <!-- Modal for vaktkode-admin -->
+  <div id="vaktkode-modal" class="modal">
+    <div class="modal-content">
+      <h3>Legg til eller endre vaktkoder</h3>
+      <label for="ny-vaktkode-input">Ny vaktkode (f.eks D3):</label>
+      <input type="text" id="ny-vaktkode-input" maxlength="8" />
+      <button id="ny-vaktkode-save" style="margin-bottom: 1em;">➕ Legg til vaktkode</button>
+      <div id="vaktkode-admin"></div>
+      <div class="modal-buttons">
+        <button id="vaktkode-modal-cancel">Lukk</button>
+      </div>
+    </div>
+  </div>
 
-  <!-- Script -->
+  <!-- Modal for bruker-admin -->
+  <div id="bruker-modal" class="modal">
+    <div class="modal-content">
+      <h3>Legg til eller endre brukere</h3>
+      <label for="ny-bruker-input">Ny bruker-ID (f.eks 1130):</label>
+      <input type="text" id="ny-bruker-input" maxlength="16" />
+      <button id="ny-bruker-save" style="margin-bottom: 1em;">➕ Legg til bruker</button>
+      <div id="bruker-admin"></div>
+      <div class="modal-buttons">
+        <button id="bruker-modal-cancel">Lukk</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="vaktkode-oversikt"><h2>Vaktkodeoversikt</h2></div>
+
   <script src="script.js"></script>
 </body>
-
 </html>

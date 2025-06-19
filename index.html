@@ -2,7 +2,8 @@
 <html lang="no">
 <head>
   <meta charset="UTF-8" />
-  <title>Digital Flipp 0.2</title>
+  <title>Digital Flipp</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
     body { font-family: Arial, sans-serif; background: #f7f7fb; margin: 0; padding: 0 0.5em; }
     h1, h2 { margin-top: 1.5em; }
@@ -38,11 +39,30 @@
 <body>
   <h1>Digital Flipp</h1>
   <div id="kontroller">
-    <button id="velg-plan-btn">⚙️ Velg plan</button>
-    <button id="legg-til-bruker">➕ Legg til eller endre brukere</button>
-    <button id="legg-til-vaktkode">➕ Legg til eller endre vaktkoder</button>
-    <button id="legg-til-tjeneste">➕ Legg til ekstra bistand</button>
+    <button id="planinnstillinger-btn">⚙️ Planinnstillinger</button>
+    <button id="legg-til-bruker">➕👤 Legg til eller endre brukere</button>
+    <button id="legg-til-vaktkode">➕🏷️ Legg til eller endre vaktkoder</button>
+    <button id="legg-til-tjeneste">➕❔ Legg til ekstra bistand</button>
     <button onclick="window.print()">🖨️ Skriv ut</button>
+    <button onclick="eksporterPlan()">💾 Eksporter plan</button>
+    <input type="file" accept=".json" id="import-json" style="display:none" onchange="importerPlanFraFil(this.files[0])">
+    <button onclick="document.getElementById('import-json').click()">🗂 Importer plan</button>
+    <label style="margin-left:1.4em">
+      <div id="navigator">
+      Ukedag:
+      <select id="forside-ukedag" style="font-size:1em;">
+        <option>mandag</option><option>tirsdag</option><option>onsdag</option>
+        <option>torsdag</option><option>fredag</option><option>lørdag</option><option>søndag</option>
+      </select>
+    </label>
+    <label style="margin-left:0.8em">
+      Periode:
+      <select id="forside-periode" style="font-size:1em;">
+        <option value="dag">Dag</option>
+        <option value="kveld">Kveld</option>
+      </select>
+    </label>
+    </div>
   </div>
   <h2>Rutenett for tjenester</h2>
   <div id="rutenett-container"></div>
@@ -50,31 +70,30 @@
   <!-- Modal for planvalg -->
   <div id="plan-modal" class="modal">
     <div class="modal-content">
-      <h3>Velg plan</h3>
-      <label for="plan-avdeling">Avdeling:</label>
+      <h3>Planinnstillinger</h3>
+      <label for="plan-avdeling">Velg avdeling:</label>
       <select id="plan-avdeling"></select>
-      <button id="ny-avdeling-btn" type="button" style="margin-bottom:0.5em;">➕ Ny avdeling</button>
-      <button id="slett-avdeling-btn" type="button" style="float:right;color:red;margin-bottom:0.5em;">Slett avdeling</button>
-      <div id="ny-avdeling-div" style="display:none;">
+      <div style="margin-top:0.5em;">
+        <input id="endre-avd-navn-input" type="text" placeholder="Nytt navn på avdeling" style="width: 60%;" />
+        <button type="button" id="endre-avd-navn-btn">Endre navn</button>
+        <button id="slett-avdeling-btn" type="button" style="float:right;color:red;">Slett avdeling</button>
+      </div>
+      <div id="ny-avdeling-div" style="margin-top:1em;display:none;">
         <input type="text" id="ny-avdeling-input" placeholder="Avdelingsnavn" />
         <button id="legg-til-avdeling-btn" type="button">Legg til</button>
       </div>
-      <label for="plan-ukedag">Ukedag:</label>
-      <select id="plan-ukedag">
-        <option>mandag</option><option>tirsdag</option><option>onsdag</option>
-        <option>torsdag</option><option>fredag</option><option>lørdag</option><option>søndag</option>
-      </select>
-      <label for="plan-periode">Periode:</label>
-      <select id="plan-periode"><option value="dag">Dag</option><option value="kveld">Kveld</option></select>
-      <label for="plan-starttid">Starttid:</label>
+      <button id="ny-avdeling-btn" type="button" style="margin-top:1em;">➕ Ny avdeling</button>
+      <hr style="margin:1em 0">
+      <b>Endre tidspunkt og intervall:</b>
+      <label for="plan-starttid" style="margin-top:0.8em;">Starttid:</label>
       <input type="time" id="plan-starttid" value="08:00" />
       <label for="plan-slutttid">Sluttid:</label>
       <input type="time" id="plan-slutttid" value="15:00" />
-      <label for="plan-intervall">Intervall (minutter):</label>
+      <label for="plan-intervall">Intervall (min):</label>
       <select id="plan-intervall"><option value="10">10</option><option value="15">15</option><option value="20">20</option><option value="30">30</option><option value="60">60</option></select>
       <div class="modal-buttons">
-        <button id="plan-velg-btn">OK</button>
-        <button id="plan-cancel-btn">Avbryt</button>
+        <button id="plan-velg-btn">Lagre</button>
+        <button id="plan-cancel-btn">Lukk</button>
       </div>
     </div>
   </div>
@@ -138,8 +157,8 @@
   <div id="vaktkode-modal" class="modal">
     <div class="modal-content">
       <h3>Legg til eller endre vaktkoder</h3>
-      <label for="ny-vaktkode-input">Ny vaktkode (f.eks D3):</label>
-      <input type="text" id="ny-vaktkode-input" maxlength="8" />
+      <label for="ny-vaktkode-input">Ny vaktkode:</label>
+      <input type="text" id="ny-vaktkode-input"/>
       <button id="ny-vaktkode-save" style="margin-bottom: 1em;">➕ Legg til vaktkode</button>
       <div id="vaktkode-admin"></div>
       <div class="modal-buttons">
@@ -152,8 +171,8 @@
   <div id="bruker-modal" class="modal">
     <div class="modal-content">
       <h3>Legg til eller endre brukere</h3>
-      <label for="ny-bruker-input">Ny bruker-ID (f.eks 1130):</label>
-      <input type="text" id="ny-bruker-input" maxlength="16" />
+      <label for="ny-bruker-input">Ny bruker-ID:</label>
+      <input type="text" id="ny-bruker-input"/>
       <button id="ny-bruker-save" style="margin-bottom: 1em;">➕ Legg til bruker</button>
       <div id="bruker-admin"></div>
       <div class="modal-buttons">

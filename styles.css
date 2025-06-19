@@ -1,157 +1,245 @@
+/* === GENERELT OG BODY === */
 body {
-  font-family: Arial, sans-serif;
-  background: #f7f7fb;
+  font-family: 'Inter', Arial, sans-serif;
+  background: linear-gradient(120deg, #f6faff 0%, #e5ebfc 100%);
+  min-height: 100vh;
   margin: 0;
-  padding: 0 0.5em;
+  padding: 0 0.8em;
+  color: #202a44;
 }
 
-h1, h2 {
-  margin-top: 1.5em;
+/* === HOVED-OVERSKRIFTER === */
+h1 {
+  text-align: center;
+  font-size: 2.6em;
+  letter-spacing: 0.04em;
+  font-weight: 800;
+  margin-top: 2.3em;
+  color: #2748be;
+  text-shadow: 0 3px 24px #e3ecff, 0 1px 0px #fff;
 }
 
-#kontroller {
-  margin: 1em 0 2em 0;
+h2 {
+  font-size: 1.5em;
+  color: #18307e;
+  margin-top: 2.2em;
+  font-weight: 700;
 }
 
-button {
-  margin: 0.1em 0.2em;
-  padding: 0.4em 0.8em;
-  font-size: 1em;
-  border-radius: 8px;
-  border: 1px solid #bbb;
-  background: #fff;
+/* === NAVIGATOR / UKEDAG OG PERIODE === */
+#navigator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2em;
+  margin: 2.2em 0 1.6em 0;
+  padding: 1.5em 1.1em;
+  background: linear-gradient(100deg, #ecf1ff 0%, #dbe9fd 100%);
+  border-radius: 1.4em;
+  box-shadow: 0 4px 32px #385cce18, 0 1px 0 #fff;
+  font-size: 1.24em;
+  font-weight: 600;
+}
+
+#navigator label, #navigator select {
+  font-size: 1.13em;
+}
+
+#navigator select {
+  background: #fffdfa;
+  border: 2px solid #b5caf3;
+  border-radius: 0.7em;
+  padding: 0.45em 1.5em 0.45em 1.2em;
+  margin: 0 0.5em;
+  font-size: 1.15em;
+  font-weight: 600;
+  outline: none;
+  box-shadow: 0 2px 8px #385cce12;
+  transition: border 0.14s, box-shadow 0.14s;
+  appearance: none;
   cursor: pointer;
 }
 
-button:hover {
-  background: #e6e6ee;
+#navigator select:focus, #navigator select:hover {
+  border-color: #5280ff;
+  box-shadow: 0 0 0 2px #aac7ff60;
 }
 
-table {
-  border-collapse: collapse;
-  margin: 0 auto;
-  background: #fff;
-  box-shadow: 0 1px 8px #0001;
+/* Emoji for ukedag og periode */
+#navigator:before {
+  content: "🗓️ ";
+  font-size: 1.25em;
+  margin-right: 0.4em;
+  vertical-align: -4px;
+}
+#navigator label[for="forside-periode"]:before {
+  content: "🌙";
+  margin-right: 0.22em;
+  font-size: 1.11em;
+  vertical-align: -3px;
 }
 
-#rutenett-container {
-  width: 100%;
+#navigator label:first-child:before {
+  content: "📅";
+  margin-right: 0.22em;
+  font-size: 1.13em;
+  vertical-align: -3px;
 }
 
+/* === KNAPPER === */
+button {
+  background: linear-gradient(90deg, #f2f7fe 70%, #f6e9fe 100%);
+  border: 2px solid #bdd2fd;
+  border-radius: 12px;
+  padding: 0.56em 1.36em;
+  margin: 0.18em 0.44em;
+  font-size: 1.13em;
+  font-weight: 600;
+  color: #2c386b;
+  box-shadow: 0 3px 18px #bbd2fd22;
+  transition: background 0.16s, box-shadow 0.16s, border 0.16s;
+  cursor: pointer;
+  outline: none;
+}
+
+button:hover, button:focus {
+  background: #e6eaff;
+  border-color: #547aff;
+  box-shadow: 0 4px 16px #547aff28;
+}
+
+/* === TABELLRUTER OG RUTENETT === */
 #rutenett-container table {
   width: 100%;
-  margin-left: 0;
-  margin-right: 0;
-  /* evt. fjern box-shadow hvis du vil ha ekstra minimalistisk */
+  background: #fafdff;
+  border-radius: 1.2em;
+  overflow: hidden;
+  box-shadow: 0 6px 32px #bfd7ff24;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 th, td {
-  border: 1px solid #ddd;
-  padding: 0.4em 0.7em;
-  min-width: 80px;
+  border: 1.5px solid #dde9fc;
+  padding: 0.56em 0.9em;
+  min-width: 72px;
   text-align: center;
+  font-size: 1.1em;
 }
 
 .rute {
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, box-shadow 0.22s;
+  background: #f3f6fb;
+  border-radius: 0.5em;
 }
-
 .rute.aktiv {
-  outline: 2px solid orange;
+  outline: 2.5px solid #ffa900;
+  box-shadow: 0 0 0 2px #ffdeba, 0 2px 12px #ffd47a22;
 }
 
+.rute.låst {
+  background: #e3e3e3 !important;
+  color: #999 !important;
+  cursor: not-allowed;
+  position: relative;
+  opacity: 0.70;
+}
+.rute.låst:after {
+  content: "⏸️";
+  position: absolute;
+  right: 8px;
+  bottom: 6px;
+  font-size: 0.98em;
+  color: #bbc;
+}
+
+/* === MODAL === */
 .modal {
   display: none;
   position: fixed;
   z-index: 999;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.25);
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(72, 108, 210, 0.12);
   justify-content: center;
   align-items: center;
+  backdrop-filter: blur(1.7px);
 }
+
 .modal-content {
   background: #fff;
-  padding: 2em;
-  border-radius: 14px;
-  box-shadow: 0 8px 32px #0002;
-  min-width: 260px;
+  padding: 2.2em 1.6em;
+  border-radius: 22px;
+  box-shadow: 0 16px 50px #385cce28, 0 2px 16px #bbcaff40;
+  min-width: 320px;
+  font-size: 1.09em;
+  position: relative;
+  animation: popin 0.22s cubic-bezier(.25,1.35,.5,1.05);
 }
 
+@keyframes popin {
+  0% { transform: scale(0.9); opacity: 0.25; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* === MODAL-INNHOLD === */
 .modal-content label {
   display: block;
-  margin: 1em 0 0.2em 0;
+  margin: 1.1em 0 0.35em 0;
+  font-weight: 600;
+  color: #223577;
 }
-
-.modal-content input, .modal-content select {
+.modal-content input,
+.modal-content select {
   width: 100%;
-  padding: 0.35em;
+  padding: 0.38em 0.55em;
   margin-bottom: 0.5em;
+  font-size: 1em;
+  border: 1.8px solid #b4cafd;
+  border-radius: 0.7em;
+  background: #f8faff;
+  box-shadow: 0 2px 8px #e6f2ff15;
+  font-weight: 500;
+  transition: border 0.13s, box-shadow 0.13s;
+}
+.modal-content input:focus, .modal-content select:focus {
+  border-color: #4b6fe6;
+  box-shadow: 0 0 0 1.7px #9bc4ff66;
 }
 
 .modal-buttons {
-  margin-top: 1.2em;
+  margin-top: 1.5em;
   text-align: right;
 }
-.modal-buttons button {
-  margin-left: 0.4em;
-}
 
+/* === VAKTKODEOVERSIKT OG HEADING === */
+#vaktkode-oversikt h2 {
+  margin-top: 2.8em;
+  font-size: 1.3em;
+  color: #5b65b5;
+}
 .vaktkode-h3 {
   display: inline-block;
-  padding: 0.4em 1.4em 0.4em 0.7em;
-  margin: 1.2em 0 0.3em 0;
-  border-radius: 0.7em;
-  font-size: 1.08em;
-  font-weight: bold;
+  padding: 0.55em 1.9em 0.55em 1.05em;
+  margin: 1.3em 0 0.45em 0;
+  border-radius: 1.2em;
+  font-size: 1.13em;
+  font-weight: 700;
+  background: #f6e8fc;
+  box-shadow: 0 1px 12px #dccfff19;
+  color: #3a225a;
+  letter-spacing: 0.01em;
 }
 
-.rute.låst {
-  cursor: not-allowed !important;
-  position: relative;
-  color: transparent !important;
-  user-select: none;
-  pointer-events: none;
-}
-.rute.låst:after {
-  content: "⛔";
-  position: absolute;
-  left: 50%; top: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 1.35em;
-  color: #e33;
-  z-index: 2;
-  pointer-events: none;
-}
-
-/* Print settings */
+/* === PRINT-VENNLIG === */
 @media print {
-  body {
-    margin: 0;
-    padding: 0;
-  }
-  #rutenett-print, #rutenett-container {
-    page-break-after: always;   /* Dette tvinger vaktkodeoversikt til neste side */
-    page-break-inside: avoid;
-  }
-  #vaktkode-oversikt {
-    page-break-before: always;  /* Start oversikt på ny side */
-  }
-  table {
-    width: 100% !important;
-    page-break-inside: avoid !important;
-  }
-  /* Fjern kontroller og knapper */
-  button, #kontroller, .modal {
-    display: none !important;
-  }
-  /* Justér font for mer plass ved behov */
-  html, body {
-    zoom: 90%;
-  }
+  body { margin: 0; padding: 0; background: #fff !important; }
+  #navigator, #kontroller, button, .modal { display: none !important; }
+  table { width: 100% !important; page-break-inside: avoid !important; }
+  html, body { zoom: 92%; }
 }
 
-
-
-/* Dynamiske vaktkodefarger legges til i JS! */
+/* === Ekstra: Smådetaljer === */
+select::-ms-expand { display: none; } /* Edge/IE pil */
+select::-webkit-input-placeholder { color: #8889af; opacity: 0.8; }
+select::placeholder { color: #8889af; opacity: 0.8; }

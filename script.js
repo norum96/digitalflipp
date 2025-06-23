@@ -38,6 +38,7 @@ document.getElementById("forside-ukedag").onchange = function() {
 };
 document.getElementById("forside-periode").onchange = function() {
   valgtPlan.periode = this.value;
+  lagVaktkodeCSS();
   byggRutenett();
   byggVaktkodeOversikt();
 };
@@ -125,6 +126,7 @@ document.getElementById("plan-velg-btn").onclick = () => {
   d.tider.kveld.intervall = d.tider.kveld.intervall || 30;
 
   lukkModal("plan-modal");
+  lagVaktkodeCSS();
   byggRutenett();
   byggVaktkodeOversikt();
 

@@ -175,6 +175,8 @@ th, td {
   font-size: 1.09em;
   position: relative;
   animation: popin 0.22s cubic-bezier(.25,1.35,.5,1.05);
+   max-height: 70vh; 
+  overflow-y: auto;
 }
 
 @keyframes popin {
